@@ -131,7 +131,7 @@
 	  LLL[i].value=""//i.toString()
       }
       for (let i=0;i<81;i++) {
-	  LLL[i].addEventListener('input',myFun)
+	  LLL[i].addEventListener('input',onEntryChange)
       }
       consoleLLL()
       // cases des 9 lignes et 9 colonnes
@@ -177,9 +177,9 @@
       } 
 
       // **********************************************************************
-      //                            FUNCTION DEFINITIONS
+      //                            FUNCTIONS
       // **********************************************************************
-      function v(k){ // return the value in the cell k, ie 0 if invalide
+      function V(k){ // return the value in the cell k, ie 0 if invalide
 	  c = LLL[k].value
 	  val = Number(c)
 	  if (isNaN(val))
@@ -192,45 +192,57 @@
       function consoleLLL() { // out on console the values
 	  console.log(LLL.map((Cell)  => Cell.value))
       } // FIN function consoleLLL()
-	      
-      function valuesIn(cases) { // return false if there is a repetition in the list of the cases
+      
+      function valuesIn(param) { // return the values in the cells param
 	  ans = []
-	  for (let k=0;k<9;k++) {
-	      x = v(cases[k])
+	  for (let k=0;k<param.length;k++) {
+	      x = V(param[k])
 	      if (x!=0)
 		  ans.push(x)
 	  }
 	  return ans
-      } // FIN function valueIn(cases)
+      } // FIN function valuesIn(cases)
       
-      function analyse() {
+      function possibilities(cell) { // return the list of the possible values for cell
+	  let [l,c,s] = memberOfLCS[cell]
+	  inLi = valuesIn(Ls[l])
+	  inCo = valuesIn(Cs[c])
+	  inSq = valuesIn(Ss[s])
+	  let alreadyThere = inLi.concat(inCo).concat(inSq)
+	  let possibilities = []
+	  for (let i=1;i<=9;i++) 
+	      if (!alreadyThere.includes(i))
+		  possibilities.push(i)
+	  return possibilities
+      } // FIN function possibilities(cell)
+      
+      function checkValidity() {
 	  // first test : coherence
+	  // if not coherent alert and return
 	  for (let k=0;k<9;k++) {
 	      a = valuesIn(Ls[k])
 	      b = new Set(a)
 	      if (a.length != b.size) {
 		  alert(`line ${k+1} has doublons`)
-		  return
+		  return 0
 	      }
 	      a = valuesIn(Cs[k])
 	      b = new Set(a)
 	      if (a.length != b.size) {
 		  alert(`column ${k+1} has doublons`)
-		  return
+		  return 0
 	      }
 	      a = valuesIn(Ss[k])
 	      b = new Set(a)
 	      if (a.length != b.size) {
 		  alert(`Square ${k+1} has doublons`)
-		  return
+		  return 0
 	      }
 	  }
-      } // FIN function analyse()
+	  return 1
+      } // FIN function checkValidity()
 
-      function outTab() {
-      } // FIN function outTab()
-	      
-      function myFun(event) { // This function is called each time an entry has been changed
+      function onEntryChange(event) { // This function is called each time an entry has been changed
 	  //console.log("Valeur actuelle : ", event.target.value);
 	  let c = event.target.value
 	  if (isNaN(Number(c))) {
@@ -242,6 +254,18 @@
       
       function go() {
 	  consoleLLL()
+	  if (checkValidity()==0)
+	      return
+	  // testing all cells to find case with only one value
+	  for (let k=0;k<81;k++) {
+	      if (LLL[k].value != "") // cell already affected
+		  continue
+	      let p = possibilities(k)
+	      if (p.length==1) {
+		  alert("k= "+k+" on doit mettre "+p[0])
+		  LLL[k].value = p[0].toString()
+	      }
+	  }
       } // FIN
       
       function example2LLL(example) { // example est une chaine avec des blancs et de \n qui ne seront pas considere
@@ -260,6 +284,10 @@
       } // FIN
       
       function f() {
+	  example1=
+	      `830 007 240 640 020 509 700 009 000  
+               000 053 608 900 201 007 405 970 000
+               000 700 005 506 030 021 098 100 034`
 	  example2LLL(example1)
       } // FIN
       
@@ -273,8 +301,21 @@
       405 970 000
 
       000 700 005
-      506 030 005
-      098 199 034`
+      506 030 021
+      098 100 034`
+      example2=
+    `950 300 401
+     000 500 002
+     040 080 007
+
+     009 000 050
+     006 408 200
+     070 000 300
+
+     700 060 020
+     800 007 000
+     605 004 093`
+      example2LLL(example2)
 
    </script>
 
