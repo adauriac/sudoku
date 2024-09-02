@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Créer un Input Dynamique</title>
+    <title>JC'SUDOKU</title>
     <style>
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <input type="text" maxlength="1" size="1" id="0">
     <input type="text" maxlength="1" size="1" id="1">
     <input type="text" maxlength="1" size="1" id="2">
@@ -57,6 +57,7 @@
     <input type="text" maxlength="1" size="1" id="33">
     <input type="text" maxlength="1" size="1" id="34">
     <input type="text" maxlength="1" size="1" id="35">
+    <button id="go1" onclick="go1()"> Go1! </button> 
     <br>
     <input type="text" maxlength="1" size="1" id="36">
     <input type="text" maxlength="1" size="1" id="37">
@@ -70,7 +71,7 @@
     <input type="text" maxlength="1" size="1" id="43">
     <input type="text" maxlength="1" size="1" id="44">
     &nbsp
-    <button id="go" onclick="go()"> Go! </button> <br>
+    <br>
     <input type="text" maxlength="1" size="1" id="45">
     <input type="text" maxlength="1" size="1" id="46">
     <input type="text" maxlength="1" size="1" id="47">
@@ -82,6 +83,7 @@
     <input type="text" maxlength="1" size="1" id="51">
     <input type="text" maxlength="1" size="1" id="52">
     <input type="text" maxlength="1" size="1" id="53">
+    <button id="go2" onclick="go2()"> Go2! </button> 
     <br>
     <br>
     <input type="text" maxlength="1" size="1" id="54">
@@ -121,178 +123,250 @@
     <input type="text" maxlength="1" size="1" id="80">
     <br>
 
+    <input type="number" id="but">
     <script>
       const LLL = []
       for (let i=0;i<81;i++) {
-	  id = i.toString()
-	  LLL.push(document.getElementById(id))
+	    id = i.toString()
+	    LLL.push(document.getElementById(id))
       }
       for (let i=0;i<81;i++) {
-	  LLL[i].value=""//i.toString()
+	    LLL[i].value=""//i.toString()
       }
       for (let i=0;i<81;i++) {
-	  LLL[i].addEventListener('input',onEntryChange)
+	    LLL[i].addEventListener('input',onEntryChange)
       }
+      but = document.getElementById("but")
+      but.addEventListener('input',onButtonChange)
       consoleLLL()
       // cases des 9 lignes et 9 colonnes
       Ls=[[],[],[],[],[],[],[],[],[]]
       Cs=[[],[],[],[],[],[],[],[],[]]
       for (let l=0;l<9;l++) {
-	  for (let c=0;c<9;c++) {
-	      k = 9*l+c
-	      Ls[l].push(k)
-	      x = ~~(k/9)
-	      y = k%9
-	      Cs[l].push(x+y*9)
-	  }
+	    for (let c=0;c<9;c++) {
+	        k = 9*l+c
+	        Ls[l].push(k)
+	        x = ~~(k/9)
+	        y = k%9
+	        Cs[l].push(x+y*9)
+	    }
       }
       // cases des 9 squares
       Ss=[[],[],[],[],[],[],[],[],[]]
       for(let ix=0;ix<3;ix++) {
-	  for(let iy=0;iy<3;iy++) {
-	      k = ix*3+iy // index du square
-	      // square (ix,iy)
-	      x = ix*3 // coord du coin haut gauche
-	      y = iy*3 // coord du coin haut gauche
-	      for (let i=0;i<3;i++) {
-		  for (let j=0;j<3;j++) {
-		      a=x+i
-		      b=y+j
-		      Ss[k].push(a+b*9)
-		  }
-	      }
-	  }
+	    for(let iy=0;iy<3;iy++) {
+	        k = ix*3+iy // index du square
+	        // square (ix,iy)
+	        x = ix*3 // coord du coin haut gauche
+	        y = iy*3 // coord du coin haut gauche
+	        for (let i=0;i<3;i++) {
+		      for (let j=0;j<3;j++) {
+		          a=x+i
+		          b=y+j
+		          Ss[k].push(a+b*9)
+		      }
+	        }
+	    }
       }
       memberOfLCS = [] // memberOfLCS[k]=[l,c,s] means cell k belongs to Ls[l],Cs|c],Ss[s]
       for (let k=0;k<81;k++) {
-	  for (let i=0;i<9;i++) {
-	      if (Ls[i].includes(k))
-		  l=i
-	      if (Cs[i].includes(k))
-		  c=i
-	      if (Ss[i].includes(k))
-		  s=i
-	  }
-	  memberOfLCS.push([l,c,s])
-      } 
+	    for (let i=0;i<9;i++) {
+	        if (Ls[i].includes(k))
+		      l=i
+	        if (Cs[i].includes(k))
+		      c=i
+	        if (Ss[i].includes(k))
+		      s=i
+	    }
+	    memberOfLCS.push([l,c,s])
+      }
 
       // **********************************************************************
       //                            FUNCTIONS
       // **********************************************************************
+      function fun(event) {
+         
+      }
       function V(k){ // return the value in the cell k, ie 0 if invalide
-	  c = LLL[k].value
-	  val = Number(c)
-	  if (isNaN(val))
-	      return 0
-	  if (val>=10)
-	      return 0
-	  return val
+	    c = LLL[k].value
+	    val = Number(c)
+	    if (isNaN(val))
+	        return 0
+	    if (val>=10)
+	        return 0
+	    return val
       } // FIN  function v(k){
 
       function consoleLLL() { // out on console the values
-	  console.log(LLL.map((Cell)  => Cell.value))
+	    console.log(LLL.map((Cell)  => Cell.value))
       } // FIN function consoleLLL()
-      
-      function valuesIn(param) { // return the values in the cells param
-	  ans = []
-	  for (let k=0;k<param.length;k++) {
-	      x = V(param[k])
-	      if (x!=0)
-		  ans.push(x)
-	  }
-	  return ans
+
+      function valuesIn(param) { // param is a list of cells, return the list of the values of these cells
+	    ans = []
+	    for (let k=0;k<param.length;k++) {
+	        x = V(param[k])
+	        if (x!=0)
+		      ans.push(x)
+	    }
+	    return ans
       } // FIN function valuesIn(cases)
       
       function possibilities(cell) { // return the list of the possible values for cell
-	  let [l,c,s] = memberOfLCS[cell]
-	  inLi = valuesIn(Ls[l])
-	  inCo = valuesIn(Cs[c])
-	  inSq = valuesIn(Ss[s])
-	  let alreadyThere = inLi.concat(inCo).concat(inSq)
-	  let possibilities = []
-	  for (let i=1;i<=9;i++) 
-	      if (!alreadyThere.includes(i))
-		  possibilities.push(i)
-	  return possibilities
+	    let [l,c,s] = memberOfLCS[cell]
+	    inLi = valuesIn(Ls[l])
+	    inCo = valuesIn(Cs[c])
+	    inSq = valuesIn(Ss[s])
+	    let alreadyThere = inLi.concat(inCo).concat(inSq)
+	    let possibilities = []
+	    for (let i=1;i<=9;i++) 
+	        if (!alreadyThere.includes(i))
+		      possibilities.push(i)
+	    return possibilities
       } // FIN function possibilities(cell)
-      
+
       function checkValidity() {
-	  // first test : coherence
-	  // if not coherent alert and return
-	  for (let k=0;k<9;k++) {
-	      a = valuesIn(Ls[k])
-	      b = new Set(a)
-	      if (a.length != b.size) {
-		  alert(`line ${k+1} has doublons`)
-		  return 0
-	      }
-	      a = valuesIn(Cs[k])
-	      b = new Set(a)
-	      if (a.length != b.size) {
-		  alert(`column ${k+1} has doublons`)
-		  return 0
-	      }
-	      a = valuesIn(Ss[k])
-	      b = new Set(a)
-	      if (a.length != b.size) {
-		  alert(`Square ${k+1} has doublons`)
-		  return 0
-	      }
-	  }
-	  return 1
+	    // first test : coherence
+	    // if not coherent alert and return
+	    for (let k=0;k<9;k++) {
+	        a = valuesIn(Ls[k])
+	        b = new Set(a)
+	        if (a.length != b.size) {
+		      alert(`line ${k+1} has doublons`)
+		      return 0
+	        }
+	        a = valuesIn(Cs[k])
+	        b = new Set(a)
+	        if (a.length != b.size) {
+		      alert(`column ${k+1} has doublons`)
+		      return 0
+	        }
+	        a = valuesIn(Ss[k])
+	        b = new Set(a)
+	        if (a.length != b.size) {
+		      alert(`Square ${k+1} has doublons`)
+		      return 0
+	        }
+	    }
+	    return 1
       } // FIN function checkValidity()
 
+      function onButtonChange(event) { // This function is called each time the button changed
+	    console.log("Valeur actuelle : ", event.target.value);
+          let k = event.target.value
+          if (k>=0 && k<examples.length)
+              example2LLL(examples[k])
+      } // FIN function onButtonChange(event) 
+
       function onEntryChange(event) { // This function is called each time an entry has been changed
-	  //console.log("Valeur actuelle : ", event.target.value);
-	  let c = event.target.value
-	  if (isNaN(Number(c))) {
-	      event.target.value = ""
-	  } else {
-	      event.target.value = c=="0" ? "" : c
-	  }
-      } // FIN
+	    //console.log("Valeur actuelle : ", event.target.value);
+	    let c = event.target.value
+	    if (isNaN(Number(c))) {
+	        event.target.value = ""
+	    } else {
+	        event.target.value = c=="0" ? "" : c
+	    }
+      } // FIN function onEntryChange(event) 
+    
+      function go1() {// testing all cells to find case with only one possible value
+	    if (checkValidity()==0)
+	        return
+	    // testing all cells to find case with only one value
+	    for (let k=0;k<81;k++) {
+	        if (LLL[k].value != "") // cell already affected
+		      continue
+	        let p = possibilities(k)
+	        if (p.length==1) {
+		      alert("k= "+k+" on doit mettre "+p[0])
+		      LLL[k].value = p[0].toString()
+	        }
+	    }
+      } // FIN function go1() {
       
-      function go() {
-	  consoleLLL()
-	  if (checkValidity()==0)
-	      return
-	  // testing all cells to find case with only one value
-	  for (let k=0;k<81;k++) {
-	      if (LLL[k].value != "") // cell already affected
-		  continue
-	      let p = possibilities(k)
-	      if (p.length==1) {
-		  alert("k= "+k+" on doit mettre "+p[0])
-		  LLL[k].value = p[0].toString()
-	      }
-	  }
-      } // FIN
+      function go2() {
+	    if (checkValidity()==0)
+	        return
+	    //  testing all set of cells (lines , columns, squares) to find a number with only one possible place
+	    all =  Cs.concat(Ls).concat(Ss)
+	    for (let i=0;i<all.length;i++) {
+	        cur = all[i]
+	        method2(cur)
+	    }
+      } // FIN function go2() {
+
+      function method2() {
+          for (let l=0;l<9;l++) {
+              let L = Ls[l]
+              let Presents = L.map(V)
+              let Absents = Vals.map(function(val,index) {if (val==0) {return -1} else {return index}})
+              
+              //for (let i=1;i<=9;i++) {
+              //    let v = V(L[i]);
+              //    if (v!=0)
+              //        continue
+              //    manquant.push(i)
+              //}
+              console.log("pour la ligne "+l+" manque "+manquant)
+          }
+      } // FIN  function method2()
+      
+      function method2bis(ensemble) {// testing all set of cells (lines , columns, squares) to find a number with only one possible place
+	    values  = valuesIn(ensemble)
+	    console.log("method2: entering with "+ensemble)
+	    missing = []
+	    for (let i=1;i<=9;i++) 
+	        if (!values.includes(i))
+		      missing.push(i)
+	    console.log("missing = "+missing)
+	    empty = []
+	    for (let i=0;i<ensemble.length;i++)
+	        if (LLL[ensemble[i]].value=="")
+		      empty.push(ensemble[i])
+	    console.log("empty = "+empty)
+	    for (let m in missing) {
+              canGo=[]
+	        for (let e in empty) {
+		      console.log("est-ce que "+missing[m]+" peut-aller en "+empty[e])
+                  let P = possibilities(empty[e])
+                  if (P.includes(missing[m])) {
+                      canGo.push([empty[e],missing[m]])
+		          console.log("OUI")
+                  } else {
+                      console.log("NON")
+	            }
+              }
+              if (canGo.length==1)
+                  alert(canGo[0][0]+" ne peut recevoir que "+canGo[0][1])
+	    }
+	    alert("ok")
+      } // FIN function method2bis(ensemble)
       
       function example2LLL(example) { // example est une chaine avec des blancs et de \n qui ne seront pas considere
-	  data = example.replace(/\s/g,'')
-	  if (data.length!=81) {
-	      alert("example2LLL : invalid argument")
-	      return
-	  }
-	  for (let i=0;i<81;i++) {
-	      c = data[i]
-	      v = (isNaN(Number(c))) ? "" : c
-	      if (v<=0 || v>=10)
-		  v = ""
-	      LLL[i].value = v
-	  }
+	    if (example == undefined)
+              return
+          data = example.replace(/\s/g,'')
+	    if (data.length!=81) {
+	        alert("example2LLL : invalid argument")
+	        return
+	    }
+	    for (let i=0;i<81;i++) {
+	        c = data[i]
+	        v = (isNaN(Number(c))) ? "" : c
+	        if (v<=0 || v>=10)
+		      v = ""
+	        LLL[i].value = v
+	    }
       } // FIN
       
       function f() {
-	  example1=
-	      `830 007 240 640 020 509 700 009 000  
+	    example1=
+	        `830 007 240 640 020 509 700 009 000  
                000 053 608 900 201 007 405 970 000
                000 700 005 506 030 021 098 100 034`
-	  example2LLL(example1)
+	    example2LLL(example1)
       } // FIN
       
-       example1=
-     `830 007 240
+      example1= // facile
+    `830 007 240
       640 020 509
       700 009 000  
 
@@ -303,7 +377,7 @@
       000 700 005
       506 030 021
       098 100 034`
-      example2=
+      example2= // diabolique ?
     `950 300 401
      000 500 002
      040 080 007
@@ -315,9 +389,42 @@
      700 060 020
      800 007 000
      605 004 093`
-      example2LLL(example2)
+      
+      example3= // facile
+    `300 024 007
+     000 030 600
+     970 651 002
 
-   </script>
+     600 090 080
+     250 000 079
+     080 070 005
 
-</body>
+     500 743 018
+     008 010 000
+     700 560 004`
+
+      example4= // difficile
+     `508 004 000
+      600 070 009
+      000 030 060
+
+      015 700 000
+      920 080 041
+      000 001 970
+
+      060 010 000
+      700 020 008
+      000 900 302`
+      
+      examples = [example1,example2,example3,example4]
+      example2LLL(example4)
+      /*
+        Pour example4 go1 ne donne rien mais si on s'interesse a la ligne 4 ou l'on veut placer 7
+        ligne4 = 92x x8x x41
+        on voit que 7 n'a qu'une place : 927 x8x x41
+                                           ^
+      */                           
+    </script>
+
+  </body>
 </html>
