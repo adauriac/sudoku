@@ -8,6 +8,8 @@
     </style>
   </head>
   <body>
+    <p>go1: find a cell with only one possible value</p>
+    <p>go2: find a row/col/square for which a missing number has only one possible position</p> 
     <input type="text" maxlength="1" size="1" id="0">
     <input type="text" maxlength="1" size="1" id="1">
     <input type="text" maxlength="1" size="1" id="2">
@@ -414,8 +416,20 @@
       060 010 000
       700 020 008
       000 900 302`
-      
-      examples = [example0,example1,example2,example3,example4]
+
+      example5= // demoniaque
+    ` 900 417 005
+      003 086 000
+      000 900 040
+
+      270 000 403
+      430 000 098
+      601 000 057
+
+      050 001 000
+      000 790 500
+      700 528 006`
+      examples = [example0,example1,example2,example3,example4,example5]
       //example2LLL(example4)
       but.value = ""
       but.max = examples.length-1
@@ -423,3 +437,4 @@
 
   </body>
 </html>
+
