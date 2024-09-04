@@ -185,6 +185,9 @@
 	    }
 	    memberOfLCS.push([l,c,s])
       }
+      // buttons to show or hide
+      let btGo1 = document.getElementById('go1')
+      let btGo2 = document.getElementById('go2')
 
       // **********************************************************************
       //                            FUNCTIONS
@@ -253,13 +256,9 @@
 		      return 0
 	        }
 	    }
-          if (nbEmptyCell() == 0) { // masquer les boutons
-              console.log("finished")
-              let b = document.getElementById('go1')
-              b.style.visibility = 'hidden'
-              b = document.getElementById('go2')
-              b.style.visibility = 'hidden'
-         }
+          let etat = (nbEmptyCell() == 0) ? 'hidden' : 'visible'
+          btGo1.style.visibility = etat
+          btGo2.style.visibility = etat
 	    return 1
       } // FIN function checkValidity()
 
@@ -271,6 +270,8 @@
 
       function onEntryChange(event) { // This function is called each time an entry has been changed
 	    //console.log("Valeur actuelle : ", event.target.value);
+          if (nbEmptyCell()!=81) { // restore the button go1 and go2 if needed
+          }
 	    let c = event.target.value
 	    if (isNaN(Number(c))) {
 	        event.target.value = ""
