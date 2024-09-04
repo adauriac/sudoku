@@ -202,10 +202,6 @@
 	    return val
       } // FIN  function v(k){
 
-      function consoleLLL() { // out on console the values
-	    console.log(LLL.map((Cell)  => Cell.value))
-      } // FIN function consoleLLL()
-
       function valuesIn(param) { // param is a list of cells, return the list of the values of these cells
 	    ans = []
 	    for (let k=0;k<param.length;k++) {
@@ -280,7 +276,7 @@
 	    }
       } // FIN function onEntryChange(event) 
     
-      function go1() {// testing all cells to find case with only one possible value
+      function go1() {// testing all cells to find one with only one possible value
 	    if (checkValidity()==0)
 	        return
 	    // testing all cells to find case with only one value
@@ -298,7 +294,7 @@
 	    }
       } // FIN function go1() {
       
-      function go2() {
+      function go2() { // find for any row, col, square if a missing number has only one place 
 	    if (checkValidity()==0)
 	        return
           // testing rows + column + square
@@ -352,15 +348,7 @@
 		      v = ""
 	        LLL[i].value = v
 	    }
-      } // FIN
-      
-      function f() {
-	    example1=
-	        `830 007 240 640 020 509 700 009 000  
-               000 053 608 900 201 007 405 970 000
-               000 700 005 506 030 021 098 100 034`
-	    example2LLL(example1)
-      } // FIN
+      } // FIN function example2LLL(example)
 
       example0=
     `000 000 000 000 000 000 000 000 000
