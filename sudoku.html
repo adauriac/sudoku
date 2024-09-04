@@ -122,9 +122,10 @@
     <input type="text" maxlength="1" size="1" id="79">
     <input type="text" maxlength="1" size="1" id="80">
     <br>
-
     <input type="number" id="but">
+
     <script>
+      verbose = 0
       const LLL = []
       for (let i=0;i<81;i++) {
 	    id = i.toString()
@@ -138,7 +139,7 @@
       }
       but = document.getElementById("but")
       but.addEventListener('input',onButtonChange)
-      consoleLLL()
+
       // cases des 9 lignes et 9 colonnes
       Ls=[[],[],[],[],[],[],[],[],[]]
       Cs=[[],[],[],[],[],[],[],[],[]]
@@ -168,6 +169,7 @@
 	        }
 	    }
       }
+      all = Ls.concat(Cs).concat(Ss) // conveniennce
       memberOfLCS = [] // memberOfLCS[k]=[l,c,s] means cell k belongs to Ls[l],Cs|c],Ss[s]
       for (let k=0;k<81;k++) {
 	    for (let i=0;i<9;i++) {
@@ -184,9 +186,6 @@
       // **********************************************************************
       //                            FUNCTIONS
       // **********************************************************************
-      function fun(event) {
-         
-      }
       function V(k){ // return the value in the cell k, ie 0 if invalide
 	    c = LLL[k].value
 	    val = Number(c)
@@ -224,29 +223,43 @@
 	    return possibilities
       } // FIN function possibilities(cell)
 
-      function checkValidity() {
+      function canBePlaced(val,index) { // is it possible to place val in cell index
+	    let [l,c,s] = memberOfLCS[index]
+	    inLi = valuesIn(Ls[l])
+	    inCo = valuesIn(Cs[c])
+	    inSq = valuesIn(Ss[s])
+	    let alreadyThere = inLi.concat(inCo).concat(inSq)
+          return !alreadyThere.includes(val)
+      } // FIN function canBePlaced(val,index)
+
+      function nbEmptyCell() { // return the number of cell not affected
+      } // FIN function nbEmptyCell()
+      
+      function checkValidity() { // check that there is no doublons on line,column or square
 	    // first test : coherence
 	    // if not coherent alert and return
-	    for (let k=0;k<9;k++) {
-	        a = valuesIn(Ls[k])
+	    for (let k=0;k<all.length;k++) {
+	        a = valuesIn(all[k])
 	        b = new Set(a)
 	        if (a.length != b.size) {
-		      alert(`line ${k+1} has doublons`)
-		      return 0
-	        }
-	        a = valuesIn(Cs[k])
-	        b = new Set(a)
-	        if (a.length != b.size) {
-		      alert(`column ${k+1} has doublons`)
-		      return 0
-	        }
-	        a = valuesIn(Ss[k])
-	        b = new Set(a)
-	        if (a.length != b.size) {
-		      alert(`Square ${k+1} has doublons`)
+		      alert(`line/column/square ${k+1} has doublons`)
 		      return 0
 	        }
 	    }
+          let endded = true
+          for (let i=0;i<LLL.length;i++) {
+              let L = LLL[i]
+              if (L.value==0) {
+                  endded = false
+                  break
+              }
+          }
+          if (endded) { // masquer les boutons
+              let b = document.getElementById('go1')
+              b.style.visibilty = 'hidden'
+              b = document.getElementById('go2')
+              b.style.visibilty = 'hidden'
+         }
 	    return 1
       } // FIN function checkValidity()
 
@@ -276,8 +289,11 @@
 		      continue
 	        let p = possibilities(k)
 	        if (p.length==1) {
-		      alert("k= "+k+" on doit mettre "+p[0])
+		      if (verbose>=1)
+                      console.log("k= "+k+" on doit mettre "+p[0])
 		      LLL[k].value = p[0].toString()
+                  LLL[k].style.color = 'blue'
+                  break
 	        }
 	    }
       } // FIN function go1() {
@@ -285,60 +301,41 @@
       function go2() {
 	    if (checkValidity()==0)
 	        return
-	    //  testing all set of cells (lines , columns, squares) to find a number with only one possible place
-	    all =  Cs.concat(Ls).concat(Ss)
-	    for (let i=0;i<all.length;i++) {
-	        cur = all[i]
-	        method2(cur)
-	    }
-      } // FIN function go2() {
-
-      function method2() {
-          for (let l=0;l<9;l++) {
-              let L = Ls[l]
-              let Presents = L.map(V)
-              let Absents = Vals.map(function(val,index) {if (val==0) {return -1} else {return index}})
-              
-              //for (let i=1;i<=9;i++) {
-              //    let v = V(L[i]);
-              //    if (v!=0)
-              //        continue
-              //    manquant.push(i)
-              //}
-              console.log("pour la ligne "+l+" manque "+manquant)
-          }
-      } // FIN  function method2()
-      
-      function method2bis(ensemble) {// testing all set of cells (lines , columns, squares) to find a number with only one possible place
-	    values  = valuesIn(ensemble)
-	    console.log("method2: entering with "+ensemble)
-	    missing = []
-	    for (let i=1;i<=9;i++) 
-	        if (!values.includes(i))
-		      missing.push(i)
-	    console.log("missing = "+missing)
-	    empty = []
-	    for (let i=0;i<ensemble.length;i++)
-	        if (LLL[ensemble[i]].value=="")
-		      empty.push(ensemble[i])
-	    console.log("empty = "+empty)
-	    for (let m in missing) {
-              canGo=[]
-	        for (let e in empty) {
-		      console.log("est-ce que "+missing[m]+" peut-aller en "+empty[e])
-                  let P = possibilities(empty[e])
-                  if (P.includes(missing[m])) {
-                      canGo.push([empty[e],missing[m]])
-		          console.log("OUI")
-                  } else {
-                      console.log("NON")
-	            }
+          // testing rows + column + square
+          for (let l=0;l<all.length;l++) {
+              let L = all[l]
+              let vals = L.map(V)
+              emptyPlaces = []
+              alreadyThere = []
+              missingValues = []
+              for (i of L) {
+                  if (V(i)==0) 
+                      emptyPlaces.push(i)
+                  else
+                      alreadyThere.push(V(i))
               }
-              if (canGo.length==1)
-                  alert(canGo[0][0]+" ne peut recevoir que "+canGo[0][1])
-	    }
-	    alert("ok")
-      } // FIN function method2bis(ensemble)
+              //console.log("traite ligne "+l+"= "+L+"valeurs= "+vals+ " finalement "+alreadyThere+" libres "+emptyPlaces)
+              for(let k=1;k<=9;k++) {
+                  if (alreadyThere.includes(k))
+                      continue
+                  let Poss = []
+                  for (i of emptyPlaces) {
+                      //console.log("j'essaie "+k+ " en "+i)
+                      if (canBePlaced(k,i))
+                          Poss.push(i)
+                  }
+                  //console.log(k+" can go in "+Poss)
+                  if (Poss.length==1) {
+                      if (verbose)
+                          console.log(k+" de la line/col/square "+l+" ne peut etre qu'en "+Poss[0])
+                      LLL[Poss[0]].value = k
+                      LLL[Poss[0]].style.color = 'red'
+                      return
+                  }
+              }
+          }          
+          return
+      } // FIN  function go2()
       
       function example2LLL(example) { // example est une chaine avec des blancs et de \n qui ne seront pas considere
 	    if (example == undefined)
