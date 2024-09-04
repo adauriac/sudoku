@@ -122,7 +122,8 @@
     <input type="text" maxlength="1" size="1" id="79">
     <input type="text" maxlength="1" size="1" id="80">
     <br>
-    <input type="number" id="but">
+    <label >Load example number </label>
+    <input type="number" min="0" max="1" value="" id="but">
 
     <script>
       verbose = 0
@@ -233,9 +234,13 @@
       } // FIN function canBePlaced(val,index)
 
       function nbEmptyCell() { // return the number of cell not affected
+          let ans = 0
+          for (let i=0;i<81;i++)
+              ans += V(i)==0
+          return ans
       } // FIN function nbEmptyCell()
       
-      function checkValidity() { // check that there is no doublons on line,column or square
+      function checkValidity() { // check that there is no doublons on line,column or square and hide button is finish
 	    // first test : coherence
 	    // if not coherent alert and return
 	    for (let k=0;k<all.length;k++) {
@@ -246,27 +251,19 @@
 		      return 0
 	        }
 	    }
-          let endded = true
-          for (let i=0;i<LLL.length;i++) {
-              let L = LLL[i]
-              if (L.value==0) {
-                  endded = false
-                  break
-              }
-          }
-          if (endded) { // masquer les boutons
+          if (nbEmptyCell() == 0) { // masquer les boutons
+              console.log("finished")
               let b = document.getElementById('go1')
-              b.style.visibilty = 'hidden'
+              b.style.visibility = 'hidden'
               b = document.getElementById('go2')
-              b.style.visibilty = 'hidden'
+              b.style.visibility = 'hidden'
          }
 	    return 1
       } // FIN function checkValidity()
 
       function onButtonChange(event) { // This function is called each time the button changed
-	    console.log("Valeur actuelle : ", event.target.value);
           let k = event.target.value
-          if (k>=0 && k<examples.length)
+          if (k>=0 && k<=examples.length)
               example2LLL(examples[k])
       } // FIN function onButtonChange(event) 
 
@@ -361,6 +358,11 @@
                000 700 005 506 030 021 098 100 034`
 	    example2LLL(example1)
       } // FIN
+
+      example0=
+    `000 000 000 000 000 000 000 000 000
+    000 000 000 000 000 000 000 000 000
+    000 000 000 000 000 000 000 000 000`
       
       example1= // facile
     `830 007 240
@@ -413,14 +415,10 @@
       700 020 008
       000 900 302`
       
-      examples = [example1,example2,example3,example4]
-      example2LLL(example4)
-      /*
-        Pour example4 go1 ne donne rien mais si on s'interesse a la ligne 4 ou l'on veut placer 7
-        ligne4 = 92x x8x x41
-        on voit que 7 n'a qu'une place : 927 x8x x41
-                                           ^
-      */                           
+      examples = [example0,example1,example2,example3,example4]
+      //example2LLL(example4)
+      but.value = ""
+      but.max = examples.length-1
     </script>
 
   </body>
