@@ -128,6 +128,10 @@
     <input type="number" min="0" max="1" value="" id="but">
 
     <script>
+      if (typeof window !== 'undefined')
+          console.log('Ce script est exécuté dans un navigateur.')
+      else 
+           console.log("Ce script N'est PAS exécuté dans un navigateur.")
       verbose = 0
       const LLL = []
       for (let i=0;i<81;i++) {
@@ -192,6 +196,10 @@
       // **********************************************************************
       //                            FUNCTIONS
       // **********************************************************************
+      function f(k) {// to use without a browser in cli
+      
+      } // FIN function f(k) {// to use without a browser in cli
+
       function V(k){ // return the value in the cell k, ie 0 if invalide
 	    c = LLL[k].value
 	    val = Number(c)
@@ -423,7 +431,6 @@
       but.value = ""
       but.max = examples.length-1
     </script>
-
   </body>
 </html>
 
