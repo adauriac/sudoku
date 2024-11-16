@@ -23,6 +23,7 @@ class sudoku:
     nCallmethod1Single = 0
     nCallmethod2 = 0
     nCallmethod2Single = 0
+    
     def __init__(self):
         self.T = [list(range(1,10))]*81
         # T contient la liste des possibilites  
@@ -34,7 +35,7 @@ class sudoku:
             l = Lfun(k)
             c = Cfun(k)
             s = Sfun(k)
-            print(f"{k,l,c,s=}")
+            # print(f"{k,l,c,s=}")
             ssEnsl[l].append(k)
             ssEnsc[c].append(k)
             ssEnss[s].append(k)
@@ -57,7 +58,7 @@ class sudoku:
         inp = inp.replace('x','0')
         inp = re.sub(r'#.*$', '', inp, flags=re.MULTILINE)
         inp = inp.replace('\n','')
-        print(inp)
+        # print(inp)
         if not bool(re.fullmatch(r'\d{81}', inp)):
             print(f"{inp} non valide")
             return;
@@ -134,47 +135,78 @@ class sudoku:
         # print(f"leaving method2Single")
         return nbChgt
 
+    def methodSingle(self):
+        """ pour chaque case teste les valeurs possibles """
+        self.nCallmethod1Single += 1
+        # print(f"Entering method1Single {self.nCallmethod1Single=}")
+        Chgt = []
+        encore = False
+        for k in range(81):
+            if len(self.T[k])==1:
+                continue
+            aux = list(set(map(lambda x:self.T[x][0] if len(self.T[x])==1 else 0,self.coMember[k])))
+            if aux.count(0)!=0:
+                aux.remove(0)
+            possible = list(set(range(1,10,1)).symmetric_difference(set(aux)))
+            self.T[k] = possible
+            Chgt.append(k)
+        return Chgt
+
     def out(self):
-        aux = list(map(lambda v:chr(v[0]+ord('0')) if len(v)==1 else 'x',my.T))
+        aux = list(map(lambda v:chr(v[0]+ord('0')) if len(v)==1 else chr(len(v)+ord('a')-2),my.T))
         for k,v in enumerate(aux):
             print("%c"%v,end=" " if k%3==2 else "")
             if k%9==8:
                 print('')
             if k==26 or k==53:
                 print("")
-            
-if __name__ == "__main__":
-    my = sudoku()
-    ex = """
-    x718x6xx2
-    x36x1xx8x
-    8xx7x96xx
-    7x5x4xxxx
-    xxx2x5xxx
-    xxxx9x4x8
-    xx89x4xx1
-    x9xx6x84x
-    5xx3x829x
-    """
-    ex2 = """
-    x71 8x6 xx2 
-    x36 x12 x8x 
-    8x2 7x9 6xx 
+        print('')
 
-    7x5 x43 xx9 
-    xxx 285 xxx 
-    xx3 x97 4x8 
-    
-    xx8 9x4 xx1 
-    x97 561 843 
-    514 378 296 
-    """
-    my.set(ex2)
-    my.out()
-    exit(123)
-    while True:
-        k1 = my.method1()
-        k2 = my.method2()
-        if k1==0 and k2==0:
-            break
-    my.out()
+    def score(self):
+        """
+        retourne le nombre de cas a possible
+        """
+        v = 1
+        for k in range(81):
+            v *= len(self.T[k])
+        return v
+
+    def check(self):
+        """
+        all the entry with more than one possibilities are disregarded
+        return the validity of the data
+        """
+        for k,ss in enumerate(self.ssEns): # for all subsets
+            aux = list(map(lambda k: self.T[k][0] if len(self.T[k])==1 else 0,ss))
+            aux = list(filter(lambda k:k!=0,aux))
+            if len(aux) != len(list(set(aux))):
+                return False
+        return True
+
+if __name__ == "__main__":
+    # facile :
+    example1 = "830007240640020509700009000000053608900201007405970000000700005506030021098100034"
+    # diabolique :
+    example2 = "950300401000500002040080007009000050006408200070000300700060020800007000605004093"
+    # facile :
+    example3 = "300024007000030600970651002600090080250000079080070005500743018008010000700560004"
+    # difficile :
+    example4 = "508004000600070009000030060015700000920080041000001970060010000700020008000900302"
+    # demoniaque :
+    example5 = "900417005003086000000900040270000403430000098601000057050001000000790500700528006"
+    examples = [example1,example2,example3,example4,example5]
+    while False:
+        k = input("numero de l'example ? ")
+        my = sudoku()
+        my.set(examples[int(k)])
+        for cpt in range(10):
+            my.methodSingle()
+            my.out()
+            score = my.score()
+            print(f"{cpt=} {score=}\n---------------------------------------------\n")
+            if score==1:
+                break
+        print("#########################################################")
+
+
+
