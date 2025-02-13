@@ -3,6 +3,16 @@ Solution du sudoku version chatGPT ie recursif
 trouve une solution si il y en a une, et detecte s'il n'y en a pas.
 Quand il y a plusieurs solutions le chois de la solution trouvee vient de
 find_empty_cell et de l'ordre qu'il utilise pour trouver la premiere cell vide 
+
+Il y a : 
+    find_empty_cell qui est la fonction effectivement appellée
+    find_empty_cell_ORIG(grid) qui marche bien 
+    my_find_empty_cell(grid) qui utilise la liste global Perm pour chercher le prochain nombre a trouver
+    on branche l'une ou l'autre avec find_empty_cell = find_empty_cell_ORIG ou find_empty_cell = my_find_empty_cell 
+    de plus dans my_find_empty_cell si il n'y a pas de Perm deja definie utilise l'identité
+
+    PROBLÈME RETESTE UNE CONFIGURATION DÉJÀ ESSAYÉE SI ON UTILISE UNE PERMUTATION NON TRIVIALE ????????
+
 """
 def is_valid(grid, row, col, num):
     """Vérifie si `num` peut être placé à la position (row, col) sans violer les règles du Sudoku."""
@@ -26,8 +36,7 @@ def my_find_empty_cell(grid):
     Retourne la première cellule vide (None) sous forme de tuple (row, col), ou None si la grille est complète.
     l'ordre d'inspection est dicté par la permutation Perm de [0..80] variable gloale
     """
-    global Perm,coup
-    coup += 1
+    global Perm
     if not "Perm" in globals():
         print("creating Perm")
         Perm = list(range(81))
@@ -123,9 +132,8 @@ exsimple = str2grid("00837246136754198224168953748972315613645827957219634871396
 
 Perm = list(range(81))
 import random
-random.shuffle(Perm)
-# Perm.reverse()
-coup = 0
+# random.shuffle(Perm)
+Perm.reverse()
 find_empty_cell = my_find_empty_cell
 go(zero_grid)
 # go(exsimple)
