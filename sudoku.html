@@ -72,6 +72,7 @@
     <input type="text" maxlength="1" size="1" id="42">
     <input type="text" maxlength="1" size="1" id="43">
     <input type="text" maxlength="1" size="1" id="44">
+    <button id="go" onclick="solve()"> SOLVE </button> 
     &nbsp
     <br>
     <input type="text" maxlength="1" size="1" id="45">
@@ -284,7 +285,22 @@
 	    }
       } // FIN function onEntryChange(event) 
     
-      function go1() {// testing all cells to find one with only one possible value
+      function solve() {// testing all cells to find one with only one possible value
+	    if (checkValidity()==0)
+	        return
+	    // testing all cells to find case with only one value
+        dataIn=""
+	    for (let k=0;k<81;k++) 
+            dataIn+= (LLL[k].value == "") ? 0: LLL[k].value
+        let grid = str2grid(dataIn)
+        if (go(grid))
+            for (let k=0;k<81;k++) {
+                console.log(Math.floor(k/9),k%9)
+                LLL[k].value = grid[Math.floor(k/9)][k%9]
+            } 
+       } // FIN function solve() 
+            
+        function go1() {// testing all cells to find one with only one possible value
 	    if (checkValidity()==0)
 	        return
 	    // testing all cells to find case with only one value
@@ -301,7 +317,7 @@
 	        }
 	    }
       } // FIN function go1() {
-      
+
       function go2() { // find for any row, col, square if a missing number has only one place 
 	    if (checkValidity()==0)
 	        return
@@ -430,6 +446,109 @@
       //example2LLL(example4)
       but.value = ""
       but.max = examples.length-1
+
+      function isValid(grid, row, col, num) {
+    // Vérification de la ligne
+    if (grid[row].includes(num)) {
+        return false;
+    }
+    // Vérification de la colonne
+    for (let i = 0; i < 9; i++) {
+        if (grid[i][col] === num) {
+            return false;
+        }
+    }
+    // Vérification du carré 3x3
+    let boxStartRow = Math.floor(row / 3) * 3;
+    let boxStartCol = Math.floor(col / 3) * 3;
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            if (grid[boxStartRow + i][boxStartCol + j] === num) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+let Perm = Array.from({ length: 81 }, (_, i) => i);
+
+function myFindEmptyCell(grid) {
+    for (let i = 0; i < 81; i++) {
+        let x = Math.floor(Perm[i] / 9);
+        let y = Perm[i] % 9;
+        if (grid[x][y] === null) {
+            return [x, y];
+        }
+    }
+    return null;
+}
+
+function findEmptyCell(grid) {
+    for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+            if (grid[row][col] === null) {
+                return [row, col];
+            }
+        }
+    }
+    return null;
+}
+
+function solveSudoku(grid) {
+    let emptyCell = findEmptyCell(grid);
+    if (!emptyCell) {
+        return true;
+    }
+    let [row, col] = emptyCell;
+    for (let num = 1; num <= 9; num++) {
+        if (isValid(grid, row, col, num)) {
+            grid[row][col] = num;
+            if (solveSudoku(grid)) {
+                return true;
+            }
+            grid[row][col] = null;
+        }
+    }
+    return false;
+}
+
+function printSudoku(grid) {
+    for (let i = 0; i < 9; i++) {
+        console.log(grid[i].map(num => (num === null ? "." : num)).join(" "));
+        if (i === 2 || i === 5) console.log(""); 
+    }
+}
+
+function str2grid(str) {
+    console.log(str)
+    str = str.replace(/\s|\n/g, "");
+    if (str.length !== 81) {
+        return null;
+    }
+    let grid = Array.from({ length: 9 }, () => Array(9).fill(null));
+    for (let i = 0; i < 81; i++) {
+        let num = parseInt(str[i], 10);
+        if (!isNaN(num) && num !== 0) {
+            grid[Math.floor(i / 9)][i % 9] = num;
+        }
+    }
+    return grid;
+}
+
+function go(sudokuGrid) {
+    console.log("Grille Sudoku initiale :");
+    printSudoku(sudokuGrid);
+    if (solveSudoku(sudokuGrid)) {
+        console.log("\nSolution trouvée :");
+        printSudoku(sudokuGrid);
+        return 1
+    } else {
+        console.log("\nPas de solution trouvée.");
+        return 0
+    }
+}
+
     </script>
   </body>
 </html>
