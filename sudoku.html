@@ -8,8 +8,14 @@
     </style>
   </head>
   <body>
-    <p>go1: find a cell with only one possible value</p>
-    <p>go2: find a row/col/square for which a missing number has only one possible position</p> 
+    <p>
+        Go1! : find a cell with only one possible value <br>
+        Go2! : find a row/col/square for which a missing number has only one possible position<br>
+        SOLVE : Guess what !<br>
+        <button id="go" onclick="solve()"> SOLVE </button> 
+        <button id="go1" onclick="go1()"> Go1! </button> 
+        <button id="go2" onclick="go2()"> Go2! </button>
+    </p><br>
     <input type="text" maxlength="1" size="1" id="0">
     <input type="text" maxlength="1" size="1" id="1">
     <input type="text" maxlength="1" size="1" id="2">
@@ -59,7 +65,6 @@
     <input type="text" maxlength="1" size="1" id="33">
     <input type="text" maxlength="1" size="1" id="34">
     <input type="text" maxlength="1" size="1" id="35">
-    <button id="go1" onclick="go1()"> Go1! </button> 
     <br>
     <input type="text" maxlength="1" size="1" id="36">
     <input type="text" maxlength="1" size="1" id="37">
@@ -72,7 +77,6 @@
     <input type="text" maxlength="1" size="1" id="42">
     <input type="text" maxlength="1" size="1" id="43">
     <input type="text" maxlength="1" size="1" id="44">
-    <button id="go" onclick="solve()"> SOLVE </button> 
     &nbsp
     <br>
     <input type="text" maxlength="1" size="1" id="45">
@@ -86,7 +90,6 @@
     <input type="text" maxlength="1" size="1" id="51">
     <input type="text" maxlength="1" size="1" id="52">
     <input type="text" maxlength="1" size="1" id="53">
-    <button id="go2" onclick="go2()"> Go2! </button> 
     <br>
     <br>
     <input type="text" maxlength="1" size="1" id="54">
@@ -124,8 +127,8 @@
     <input type="text" maxlength="1" size="1" id="78">
     <input type="text" maxlength="1" size="1" id="79">
     <input type="text" maxlength="1" size="1" id="80">
-    <br>
-    <label >You can fill your own grid or load the example number</label>
+    <br><br>
+    <label >You can fill your own grid<br>or load the example number</label>
     <input type="number" min="0" max="1" value="" id="but">
 
     <script>
