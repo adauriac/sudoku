@@ -11,7 +11,8 @@ Il y a :
     on branche l'une ou l'autre avec find_empty_cell = find_empty_cell_ORIG ou find_empty_cell = my_find_empty_cell 
     de plus dans my_find_empty_cell si il n'y a pas de Perm deja definie utilise l'identité
 
-    PROBLÈME RETESTE UNE CONFIGURATION DÉJÀ ESSAYÉE SI ON UTILISE UNE PERMUTATION NON TRIVIALE ????????
+    VERSION DE: TEST ON VERIFIE QUE LES CONFIGURATIONS QUE L'ON TESTE SONT BIEN NOUVELLES ET C'EST OK !
+    On peut change le nombre d'echange sur la permutation identite (voir NB ligne 152)
 
 """
 def is_valid(grid, row, col, num):
@@ -58,18 +59,21 @@ def find_empty_cell_ORIG(grid):
 
 def solve_sudoku(grid):
     """Résout le Sudoku en remplissant `grid` avec une approche récursive de backtracking."""
-    str=""
-    for i in range(9):
-        for j in range(9):
-            str+= "." if grid[i][j]is None else "%d"%grid[i][j]
-    print(f"{str=}")
+    global gridAlreadySeen
+    if True:
+        str=grid2str(grid)
+        print(f"{str}")
+        if str in gridAlreadySeen:
+            print("OOPS remise ...")
+            exit(123)
+        gridAlreadySeen.append(str)
     empty_cell = find_empty_cell(grid)
     if not empty_cell:  # Si plus aucune case vide, la grille est résolue
         return True
     row, col = empty_cell
     for num in range(1, 10):  # Essai des chiffres de 1 à 9
         if is_valid(grid, row, col, num):
-            grid[row][col] = num  # Place un chiffre valide            
+            grid[row][col] = num  # Place un chiffre valide
             if solve_sudoku(grid):  # Récursion
                 return True           
             grid[row][col] = None  # Annule le choix (backtrack)    
@@ -97,6 +101,17 @@ def str2grid(strinGrid):
             return None
     return res
 # FIN str2grid
+
+def grid2str(grid):
+    ans = ''
+    for ligne in grid:
+        for x in ligne:
+            if x is None :
+                ans += '0'
+            else:
+                ans += "%d"%x
+    return ans
+# FIN  grid2str(grid
 
 def go(sudoku_grid):# Affichage de la grille avant résolution
     print("Grille Sudoku initiale :")
@@ -133,7 +148,14 @@ exsimple = str2grid("00837246136754198224168953748972315613645827957219634871396
 Perm = list(range(81))
 import random
 # random.shuffle(Perm)
-Perm.reverse()
+# Perm.reverse()
+NB=5
+for i in range(NB):
+    i = random.randint(0,80)
+    j = random.randint(0,80)
+    [Perm[i],Perm[j]] = [Perm[j],Perm[i]]
+
 find_empty_cell = my_find_empty_cell
+gridAlreadySeen = []
 go(zero_grid)
 # go(exsimple)
